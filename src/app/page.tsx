@@ -2,17 +2,18 @@ import { Button } from "@/components/ui/button"
 
 export default function Home() {
 	return (
-		<div className="container px-10 py-8">
-			<h1 className="text-3xl font-bold mb-6">
-				Bem-vindo ao Carrinho Venda Rápida
-			</h1>
-			<p className="text-lg mb-4">
-				Utilize o menu de navegação acima para acessar as funcionalidades do
-				sistema.
-			</p>
-			<div className="mt-8">
-				<Button className="mr-4">Iniciar Venda</Button>
-				<Button variant="outline">Ver Produtos</Button>
+		<div className="min-h-screen">
+			<div className="p-8 border-t">
+				<div className="flex flex-col gap-6 items-center justify-center">
+					<h1 className="text-2xl font-bold">Variants de Botão</h1>
+					<div className="flex gap-4 items-center justify-center flex-wrap">
+						<Button>Default</Button>
+						<Button variant="success">Success</Button>
+						<Button variant="warning">Warning</Button>
+						<Button variant="danger">Danger</Button>
+						<Button variant="info">Info</Button>
+					</div>
+				</div>
 			</div>
 		</div>
 	)
