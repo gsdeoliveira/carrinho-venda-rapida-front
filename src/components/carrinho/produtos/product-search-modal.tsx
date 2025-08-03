@@ -33,7 +33,7 @@ export function ProductSearchModal() {
 			</DialogTrigger>
 			<DialogContent className="xl:max-w-[1024px]">
 				<DialogHeader>
-					<DialogTitle className="text-lg font-semibold flex items-center gap-2">
+					<DialogTitle className="text-base md:text-lg flex items-center gap-2">
 						Adicionar Produtos ao Carrinho
 					</DialogTitle>
 				</DialogHeader>
