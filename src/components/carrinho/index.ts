@@ -2,19 +2,17 @@
 export { CartActions } from "./cart-actions"
 export { CartSummary } from "./cart-summary"
 export { EmptyState } from "./empty-state"
-export { mockProducts } from "./mock-data"
-export type { CartItem, Product } from "./types"
-
 // Componentes de itens do carrinho
-export { 
-  CartItemsList, 
-  CartItemsDataTable, 
-  createCartItemColumns 
+export {
+	CartItemsDataTable,
+	CartItemsList,
+	createCartItemColumns,
 } from "./itens"
-
+export { mockProducts } from "./mock-data"
 // Componentes de produtos
-export { 
-  ProductSearchModal, 
-  ProductTable, 
-  createProductColumns 
+export {
+	createProductColumns,
+	ProductSearchModal,
+	ProductTable,
 } from "./produtos"
+export type { CartItem, Product } from "./types"

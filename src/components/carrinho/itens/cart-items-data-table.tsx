@@ -7,8 +7,6 @@ import {
 	getCoreRowModel,
 	getFilteredRowModel,
 	getPaginationRowModel,
-	getSortedRowModel,
-	type SortingState,
 	useReactTable,
 } from "@tanstack/react-table"
 import { useState } from "react"
@@ -32,35 +30,39 @@ export function CartItemsDataTable<TData, TValue>({
 	columns,
 	data,
 }: CartItemsDataTableProps<TData, TValue>) {
-	const [sorting, setSorting] = useState<SortingState>([])
 	const [columnFilters, setColumnFilters] = useState<ColumnFiltersState>([])
 
 	const table = useReactTable({
 		data,
 		columns,
-		onSortingChange: setSorting,
 		onColumnFiltersChange: setColumnFilters,
 		getCoreRowModel: getCoreRowModel(),
 		getPaginationRowModel: getPaginationRowModel(),
-		getSortedRowModel: getSortedRowModel(),
 		getFilteredRowModel: getFilteredRowModel(),
 		state: {
-			sorting,
 			columnFilters,
 		},
 	})
 
 	return (
 		<div className="w-full">
-			<div className="rounded-md border">
-				<div className="max-h-96 overflow-y-auto">
-					<Table>
+			<div className="rounded-md border overflow-hidden">
+				<div className="max-h-96 overflow-y-auto overflow-x-auto">
+					<Table className="min-w-[1200px] table-fixed">
 						<TableHeader>
 							{table.getHeaderGroups().map((headerGroup) => (
 								<TableRow key={headerGroup.id} className="bg-gray-50">
 									{headerGroup.headers.map((header) => {
 										return (
-											<TableHead key={header.id}>
+											<TableHead
+												key={header.id}
+												className="px-2 py-3"
+												style={{
+													width: header.column.columnDef.size,
+													maxWidth: header.column.columnDef.size,
+													minWidth: header.column.columnDef.size,
+												}}
+											>
 												{header.isPlaceholder
 													? null
 													: flexRender(
@@ -82,7 +84,18 @@ export function CartItemsDataTable<TData, TValue>({
 										className="hover:bg-gray-50"
 									>
 										{row.getVisibleCells().map((cell) => (
-											<TableCell key={cell.id}>
+											<TableCell
+												key={cell.id}
+												className="px-2 py-2"
+												style={{
+													width: cell.column.columnDef.size,
+													maxWidth: cell.column.columnDef.size,
+													minWidth: cell.column.columnDef.size,
+													overflow: "hidden",
+													textOverflow: "ellipsis",
+													whiteSpace: "nowrap",
+												}}
+											>
 												{flexRender(
 													cell.column.columnDef.cell,
 													cell.getContext(),

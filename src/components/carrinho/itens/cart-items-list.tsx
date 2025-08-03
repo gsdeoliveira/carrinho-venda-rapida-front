@@ -10,51 +10,7 @@ import { createCartItemColumns } from "./cart-item-columns"
 import { CartItemsDataTable } from "./cart-items-data-table"
 
 export function CartItemsList() {
-	const {
-		cartItems,
-		updateQuantity,
-		updatePesoLiquido,
-		updateGerarRibana,
-		updatePercentualRibana,
-		updateObservacao,
-		removeFromCart,
-	} = useCart()
-
-	// Otimizando as funções de atualização com useCallback
-	const handleUpdateQuantity = useCallback(
-		(id: string, quantity: number) => {
-			updateQuantity(id, quantity)
-		},
-		[updateQuantity],
-	)
-
-	const handleUpdatePesoLiquido = useCallback(
-		(id: string, newPeso: number) => {
-			updatePesoLiquido(id, newPeso)
-		},
-		[updatePesoLiquido],
-	)
-
-	const handleUpdateGerarRibana = useCallback(
-		(id: string, gerarRibana: boolean) => {
-			updateGerarRibana(id, gerarRibana)
-		},
-		[updateGerarRibana],
-	)
-
-	const handleUpdatePercentualRibana = useCallback(
-		(id: string, percentual: number) => {
-			updatePercentualRibana(id, percentual)
-		},
-		[updatePercentualRibana],
-	)
-
-	const handleUpdateObservacao = useCallback(
-		(id: string, observacao: string) => {
-			updateObservacao(id, observacao)
-		},
-		[updateObservacao],
-	)
+	const { cartItems, removeFromCart } = useCart()
 
 	const handleRemoveFromCart = useCallback(
 		(id: string) => {
@@ -65,23 +21,8 @@ export function CartItemsList() {
 
 	// Otimizando a criação das colunas com useMemo
 	const columns = useMemo(
-		() =>
-			createCartItemColumns(
-				handleUpdateQuantity,
-				handleUpdatePesoLiquido,
-				handleUpdateGerarRibana,
-				handleUpdatePercentualRibana,
-				handleUpdateObservacao,
-				handleRemoveFromCart,
-			),
-		[
-			handleUpdateQuantity,
-			handleUpdatePesoLiquido,
-			handleUpdateGerarRibana,
-			handleUpdatePercentualRibana,
-			handleUpdateObservacao,
-			handleRemoveFromCart,
-		],
+		() => createCartItemColumns(handleRemoveFromCart),
+		[handleRemoveFromCart],
 	)
 
 	return (

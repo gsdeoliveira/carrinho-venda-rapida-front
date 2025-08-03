@@ -112,7 +112,8 @@ export function CartProvider({ children, initialCartData }: CartProviderProps) {
 					? {
 							...item,
 							pesoLiquido: newPeso,
-							pesoUnitario: item.quantidade > 0 ? newPeso / item.quantidade : newPeso,
+							pesoUnitario:
+								item.quantidade > 0 ? newPeso / item.quantidade : newPeso,
 						}
 					: item,
 			),
@@ -127,13 +128,16 @@ export function CartProvider({ children, initialCartData }: CartProviderProps) {
 		)
 	}, [])
 
-	const updatePercentualRibana = useCallback((id: string, percentual: number) => {
-		setCartItems((currentItems) =>
-			currentItems.map((item) =>
-				item.id === id ? { ...item, percentualRibana: percentual } : item,
-			),
-		)
-	}, [])
+	const updatePercentualRibana = useCallback(
+		(id: string, percentual: number) => {
+			setCartItems((currentItems) =>
+				currentItems.map((item) =>
+					item.id === id ? { ...item, percentualRibana: percentual } : item,
+				),
+			)
+		},
+		[],
+	)
 
 	const updateObservacao = useCallback((id: string, observacao: string) => {
 		setCartItems((currentItems) =>

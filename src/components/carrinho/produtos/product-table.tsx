@@ -1,6 +1,6 @@
 "use client"
 
-import { useMemo, useState } from "react"
+import { useCallback, useMemo, useState } from "react"
 import { useCart } from "@/hooks/use-cart"
 import { mockProducts } from "../mock-data"
 import type { Product } from "../types"
@@ -13,29 +13,35 @@ export function ProductTable() {
 	const [selectedProduct, setSelectedProduct] = useState<Product | null>(null)
 	const [isAddModalOpen, setIsAddModalOpen] = useState(false)
 
-	const handleAddProduct = (product: Product) => {
+	const handleAddProduct = useCallback((product: Product) => {
 		setSelectedProduct(product)
 		setIsAddModalOpen(true)
-	}
+	}, [])
 
-	const handleConfirmAdd = (productData: {
-		product: Product
-		quantidade: number
-		volume: number
-		valorUnitario: number
-		misturarLote: boolean
-	}) => {
-		// Adicionar ao carrinho com os dados personalizados
-		addToCart({
-			...productData.product,
-			preco: productData.valorUnitario,
-			peso: productData.volume,
-		})
-		setIsAddModalOpen(false)
-		setSelectedProduct(null)
-	}
+	const handleConfirmAdd = useCallback(
+		(productData: {
+			product: Product
+			quantidade: number
+			volume: number
+			valorUnitario: number
+			misturarLote: boolean
+		}) => {
+			// Adicionar ao carrinho com os dados personalizados
+			addToCart({
+				...productData.product,
+				preco: productData.valorUnitario,
+				peso: productData.volume,
+			})
+			setIsAddModalOpen(false)
+			setSelectedProduct(null)
+		},
+		[addToCart],
+	)
 
-	const columns = useMemo(() => createProductColumns(handleAddProduct), [])
+	const columns = useMemo(
+		() => createProductColumns(handleAddProduct),
+		[handleAddProduct],
+	)
 
 	return (
 		<>
