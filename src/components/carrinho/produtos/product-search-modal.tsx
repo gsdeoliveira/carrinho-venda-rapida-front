@@ -33,12 +33,12 @@ export function ProductSearchModal() {
 			</DialogTrigger>
 			<DialogContent className="xl:max-w-[1024px]">
 				<DialogHeader>
-					<DialogTitle className="text-xl font-semibold flex items-center gap-2">
+					<DialogTitle className="text-lg font-semibold flex items-center gap-2">
 						Adicionar Produtos ao Carrinho
 					</DialogTitle>
 				</DialogHeader>
 
-				<div className="space-y-4 overflow-auto">
+				<div className="space-y-4 overflow-auto max-h-[calc(100vh-200px)]">
 					{/* Filtros Desktop - sempre visíveis */}
 					<div className="hidden sm:block">
 						<div className="flex flex-col sm:flex-row items-center gap-3">

@@ -94,7 +94,7 @@ export function AddProductModal({
 
 	return (
 		<Dialog open={isOpen} onOpenChange={onClose}>
-			<DialogContent className="sm:max-w-[500px]">
+			<DialogContent className="sm:max-w-[500px] overflow-auto max-h-[calc(100vh-200px)]">
 				<DialogHeader>
 					<DialogTitle>Adicionar Produto ao Carrinho</DialogTitle>
 					<DialogDescription>
