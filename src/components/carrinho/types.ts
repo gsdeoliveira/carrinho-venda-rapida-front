@@ -1,4 +1,4 @@
-export interface CartItem {
+export interface ItemCarrinho {
 	id: string
 	empresa: number
 	descricao: string
@@ -13,7 +13,7 @@ export interface CartItem {
 	observacao: string
 }
 
-export interface Product {
+export interface Produto {
 	id: string
 	codigo: string
 	descricao: string
@@ -21,6 +21,7 @@ export interface Product {
 	categoria: string
 	unidade: string
 	peso: number
+	quantidade: number
 	empresa: number
 	estoque: number
 }

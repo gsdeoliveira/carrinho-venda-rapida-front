@@ -1,60 +1,60 @@
 "use client"
 
 import { useCallback, useMemo, useState } from "react"
-import { useCart } from "@/hooks/use-cart"
-import { mockProducts } from "../mock-data"
-import type { Product } from "../types"
-import { AddProductModal } from "./add-product-modal"
-import { createProductColumns } from "./product-columns"
-import { ProductDataTable } from "./product-data-table"
+import { useCarrinho } from "@/hooks/use-cart"
+import { produtosMock } from "../mock-data"
+import type { Produto } from "../types"
+import { ModalAdicionarProduto } from "./add-product-modal"
+import { criarColunasProduto } from "./product-columns"
+import { TabelaDadosProduto } from "./product-data-table"
 
-export function ProductTable() {
-	const { addToCart } = useCart()
-	const [selectedProduct, setSelectedProduct] = useState<Product | null>(null)
-	const [isAddModalOpen, setIsAddModalOpen] = useState(false)
+export function TabelaProduto() {
+	const { adicionarAoCarrinho } = useCarrinho()
+	const [produtoSelecionado, setProdutoSelecionado] = useState<Produto | null>(null)
+	const [modalAdicionarAberto, setModalAdicionarAberto] = useState(false)
 
-	const handleAddProduct = useCallback((product: Product) => {
-		setSelectedProduct(product)
-		setIsAddModalOpen(true)
+	const lidarComAdicionarProduto = useCallback((produto: Produto) => {
+		setProdutoSelecionado(produto)
+		setModalAdicionarAberto(true)
 	}, [])
 
-	const handleConfirmAdd = useCallback(
-		(productData: {
-			product: Product
+	const lidarComConfirmarAdicao = useCallback(
+		(dadosProduto: {
+			produto: Produto
 			quantidade: number
 			volume: number
 			valorUnitario: number
 			misturarLote: boolean
 		}) => {
 			// Adicionar ao carrinho com os dados personalizados
-			addToCart({
-				...productData.product,
-				preco: productData.valorUnitario,
-				peso: productData.volume,
+			adicionarAoCarrinho({
+				...dadosProduto.produto,
+				preco: dadosProduto.valorUnitario,
+				peso: dadosProduto.volume,
 			})
-			setIsAddModalOpen(false)
-			setSelectedProduct(null)
+			setModalAdicionarAberto(false)
+			setProdutoSelecionado(null)
 		},
-		[addToCart],
+		[adicionarAoCarrinho],
 	)
 
-	const columns = useMemo(
-		() => createProductColumns(handleAddProduct),
-		[handleAddProduct],
+	const colunas = useMemo(
+		() => criarColunasProduto(lidarComAdicionarProduto),
+		[lidarComAdicionarProduto],
 	)
 
 	return (
 		<>
-			<ProductDataTable columns={columns} data={mockProducts} />
-			{selectedProduct && (
-				<AddProductModal
-					product={selectedProduct}
-					isOpen={isAddModalOpen}
-					onClose={() => {
-						setIsAddModalOpen(false)
-						setSelectedProduct(null)
+			<TabelaDadosProduto colunas={colunas} dados={produtosMock} />
+			{produtoSelecionado && (
+				<ModalAdicionarProduto
+					produto={produtoSelecionado}
+					aberto={modalAdicionarAberto}
+					aoFechar={() => {
+						setModalAdicionarAberto(false)
+						setProdutoSelecionado(null)
 					}}
-					onAddToCart={handleConfirmAdd}
+					aoAdicionarAoCarrinho={lidarComConfirmarAdicao}
 				/>
 			)}
 		</>

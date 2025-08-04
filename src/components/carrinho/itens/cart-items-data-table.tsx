@@ -21,26 +21,26 @@ import {
 	TableRow,
 } from "@/components/ui/table"
 
-interface CartItemsDataTableProps<TData, TValue> {
-	columns: ColumnDef<TData, TValue>[]
-	data: TData[]
+interface PropsTabelaDadosItensCarrinho<TData, TValue> {
+	colunas: ColumnDef<TData, TValue>[]
+	dados: TData[]
 }
 
-export function CartItemsDataTable<TData, TValue>({
-	columns,
-	data,
-}: CartItemsDataTableProps<TData, TValue>) {
-	const [columnFilters, setColumnFilters] = useState<ColumnFiltersState>([])
+export function TabelaDadosItensCarrinho<TData, TValue>({
+	colunas,
+	dados,
+}: PropsTabelaDadosItensCarrinho<TData, TValue>) {
+	const [filtrosColunas, setFiltrosColunas] = useState<ColumnFiltersState>([])
 
-	const table = useReactTable({
-		data,
-		columns,
-		onColumnFiltersChange: setColumnFilters,
+	const tabela = useReactTable({
+		data: dados,
+		columns: colunas,
+		onColumnFiltersChange: setFiltrosColunas,
 		getCoreRowModel: getCoreRowModel(),
 		getPaginationRowModel: getPaginationRowModel(),
 		getFilteredRowModel: getFilteredRowModel(),
 		state: {
-			columnFilters,
+			columnFilters: filtrosColunas,
 		},
 	})
 
@@ -50,7 +50,7 @@ export function CartItemsDataTable<TData, TValue>({
 				<div className="max-h-96 overflow-y-auto overflow-x-auto">
 					<Table className="min-w-[1200px] table-fixed">
 						<TableHeader>
-							{table.getHeaderGroups().map((headerGroup) => (
+							{tabela.getHeaderGroups().map((headerGroup) => (
 								<TableRow key={headerGroup.id} className="bg-gray-50">
 									{headerGroup.headers.map((header) => {
 										return (
@@ -76,8 +76,8 @@ export function CartItemsDataTable<TData, TValue>({
 							))}
 						</TableHeader>
 						<TableBody>
-							{table.getRowModel().rows?.length ? (
-								table.getRowModel().rows.map((row) => (
+							{tabela.getRowModel().rows?.length ? (
+								tabela.getRowModel().rows.map((row) => (
 									<TableRow
 										key={row.id}
 										data-state={row.getIsSelected() && "selected"}
@@ -107,7 +107,7 @@ export function CartItemsDataTable<TData, TValue>({
 							) : (
 								<TableRow>
 									<TableCell
-										colSpan={columns.length}
+										colSpan={colunas.length}
 										className="h-24 text-center"
 									>
 										Nenhum item no carrinho.
@@ -120,22 +120,22 @@ export function CartItemsDataTable<TData, TValue>({
 			</div>
 			<div className="flex items-center justify-end space-x-2 py-4">
 				<div className="flex-1 text-sm text-muted-foreground">
-					{table.getFilteredRowModel().rows.length} item(s) no carrinho.
+					{tabela.getFilteredRowModel().rows.length} item(s) no carrinho.
 				</div>
 				<div className="space-x-2">
 					<Button
 						variant="outline"
 						size="sm"
-						onClick={() => table.previousPage()}
-						disabled={!table.getCanPreviousPage()}
+						onClick={() => tabela.previousPage()}
+						disabled={!tabela.getCanPreviousPage()}
 					>
 						Anterior
 					</Button>
 					<Button
 						variant="outline"
 						size="sm"
-						onClick={() => table.nextPage()}
-						disabled={!table.getCanNextPage()}
+						onClick={() => tabela.nextPage()}
+						disabled={!tabela.getCanNextPage()}
 					>
 						Próximo
 					</Button>

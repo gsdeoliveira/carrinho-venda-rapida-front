@@ -3,11 +3,11 @@
 import { useRouter } from "next/navigation"
 import { useEffect, useState } from "react"
 import { Button } from "@/components/ui/button"
-import { useCartCreation } from "@/hooks/use-cart"
+import { useCriacaoCarrinho } from "@/hooks/use-cart"
 
 export default function NovoCarrinhoPage() {
 	const router = useRouter()
-	const { createNewCart } = useCartCreation()
+	const { criarNovoCarrinho } = useCriacaoCarrinho()
 	const [_isCreating, setIsCreating] = useState(true)
 	const [error, setError] = useState<string | null>(null)
 
@@ -18,7 +18,7 @@ export default function NovoCarrinhoPage() {
 				setError(null)
 
 				// Criar novo carrinho
-				const newCartId = await createNewCart()
+				const newCartId = await criarNovoCarrinho()
 
 				// Redirecionar para o carrinho criado
 				router.replace(`/carrinho/${newCartId}`)
@@ -30,7 +30,7 @@ export default function NovoCarrinhoPage() {
 		}
 
 		createAndRedirect()
-	}, [createNewCart, router])
+	}, [criarNovoCarrinho, router])
 
 	if (error) {
 		return (

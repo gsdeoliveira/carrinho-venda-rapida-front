@@ -4,11 +4,12 @@ import type { ColumnDef } from "@tanstack/react-table"
 import { Check, Trash2 } from "lucide-react"
 
 import { Button } from "@/components/ui/button"
-import type { CartItem } from "../types"
+import type { ItemCarrinho } from "../types"
 
-export const createCartItemColumns = (
-	removeFromCart: (id: string) => void,
-): ColumnDef<CartItem>[] => [
+export const criarColunasItemCarrinho = (
+	removerDoCarrinho: (id: string) => void,
+	isMobile: boolean = false,
+): ColumnDef<ItemCarrinho>[] => [
 	{
 		accessorKey: "empresa",
 		header: () => <div className="text-center">Empresa</div>,
@@ -20,8 +21,13 @@ export const createCartItemColumns = (
 	{
 		accessorKey: "descricao",
 		header: () => <div>Descrição</div>,
-		cell: ({ row }) => <div>{row.getValue("descricao")}</div>,
-		size: 400,
+		cell: ({ row }) => (
+			<div className="text-left whitespace-normal">
+				{row.getValue("descricao")}
+			</div>
+		),
+		minSize: isMobile ? 150 : 200,
+		size: isMobile ? 180 : 300,
 	},
 	{
 		accessorKey: "unidade",
@@ -110,7 +116,7 @@ export const createCartItemColumns = (
 					<Button
 						size="sm"
 						variant="danger"
-						onClick={() => removeFromCart(item.id)}
+						onClick={() => removerDoCarrinho(item.id)}
 					>
 						<Trash2 className="h-4 w-4" />
 					</Button>

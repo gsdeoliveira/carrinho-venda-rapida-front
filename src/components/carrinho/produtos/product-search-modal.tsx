@@ -17,14 +17,14 @@ import {
 } from "@/components/ui/dialog"
 import { Input } from "@/components/ui/input"
 import { Label } from "@/components/ui/label"
-import { useCartModal } from "@/hooks/use-cart"
-import { ProductTable } from "./product-table"
+import { useModalCarrinho } from "@/hooks/use-cart"
+import { TabelaProduto } from "./product-table"
 
-export function ProductSearchModal() {
-	const { isModalOpen, setModalOpen, searchFilters, updateSearchFilter } =
-		useCartModal()
+export function ModalBuscaProduto() {
+	const { modalAberto, setModalAberto, filtrosBusca, atualizarFiltroBusca } =
+		useModalCarrinho()
 	return (
-		<Dialog open={isModalOpen} onOpenChange={setModalOpen}>
+		<Dialog open={modalAberto} onOpenChange={setModalAberto}>
 			<DialogTrigger asChild>
 				<Button variant="success">
 					<Plus className="h-4 w-4" />
@@ -34,7 +34,7 @@ export function ProductSearchModal() {
 			<DialogContent className="xl:max-w-[1024px]">
 				<DialogHeader>
 					<DialogTitle className="text-base md:text-lg flex items-center gap-2">
-						Adicionar Produtos ao Carrinho
+						Adicionar Produtos
 					</DialogTitle>
 				</DialogHeader>
 
@@ -47,9 +47,9 @@ export function ProductSearchModal() {
 								<Input
 									id="codArtigo"
 									placeholder="Digite o código"
-									value={searchFilters.codArtigo}
+									value={filtrosBusca.codArtigo}
 									onChange={(e) =>
-										updateSearchFilter("codArtigo", e.target.value)
+										atualizarFiltroBusca("codArtigo", e.target.value)
 									}
 								/>
 							</div>
@@ -58,8 +58,10 @@ export function ProductSearchModal() {
 								<Input
 									id="codCor"
 									placeholder="Digite a cor"
-									value={searchFilters.codCor}
-									onChange={(e) => updateSearchFilter("codCor", e.target.value)}
+									value={filtrosBusca.codCor}
+									onChange={(e) =>
+										atualizarFiltroBusca("codCor", e.target.value)
+									}
 								/>
 							</div>
 							<div className="flex-1 w-full">
@@ -67,9 +69,9 @@ export function ProductSearchModal() {
 								<Input
 									id="descricao"
 									placeholder="Digite a descrição"
-									value={searchFilters.descricao}
+									value={filtrosBusca.descricao}
 									onChange={(e) =>
-										updateSearchFilter("descricao", e.target.value)
+										atualizarFiltroBusca("descricao", e.target.value)
 									}
 								/>
 							</div>
@@ -96,9 +98,9 @@ export function ProductSearchModal() {
 											<Input
 												id="codArtigo-mobile"
 												placeholder="Digite o código"
-												value={searchFilters.codArtigo}
+												value={filtrosBusca.codArtigo}
 												onChange={(e) =>
-													updateSearchFilter("codArtigo", e.target.value)
+													atualizarFiltroBusca("codArtigo", e.target.value)
 												}
 											/>
 										</div>
@@ -107,9 +109,9 @@ export function ProductSearchModal() {
 											<Input
 												id="codCor-mobile"
 												placeholder="Digite a cor"
-												value={searchFilters.codCor}
+												value={filtrosBusca.codCor}
 												onChange={(e) =>
-													updateSearchFilter("codCor", e.target.value)
+													atualizarFiltroBusca("codCor", e.target.value)
 												}
 											/>
 										</div>
@@ -118,9 +120,9 @@ export function ProductSearchModal() {
 											<Input
 												id="descricao-mobile"
 												placeholder="Digite a descrição"
-												value={searchFilters.descricao}
+												value={filtrosBusca.descricao}
 												onChange={(e) =>
-													updateSearchFilter("descricao", e.target.value)
+													atualizarFiltroBusca("descricao", e.target.value)
 												}
 											/>
 										</div>
@@ -134,7 +136,7 @@ export function ProductSearchModal() {
 						</Accordion>
 					</div>
 
-					<ProductTable />
+					<TabelaProduto />
 				</div>
 			</DialogContent>
 		</Dialog>

@@ -7,131 +7,131 @@ import {
 	useContext,
 	useState,
 } from "react"
-import type { CartItem, Product } from "@/components/carrinho/types"
+import type { ItemCarrinho, Produto } from "@/components/carrinho/types"
 
-interface CartInfo {
+interface InfoCarrinho {
 	id: string
 	numero: string
 	cliente: string
 	tipoNegociacao: string
 }
 
-interface CartContextType {
+interface TipoContextoCarrinho {
 	// Estado do carrinho
-	cartItems: CartItem[]
-	cartInfo: CartInfo
+	itensCarrinho: ItemCarrinho[]
+	infoCarrinho: InfoCarrinho
 
 	// Totais calculados
-	totalItems: number
-	totalQuantity: number
-	totalValue: number
+	totalItens: number
+	quantidadeTotal: number
+	valorTotal: number
 
 	// Ações
-	addToCart: (product: Product, quantity?: number) => void
-	updateQuantity: (id: string, newQuantity: number) => void
-	updatePesoLiquido: (id: string, newPeso: number) => void
-	updateGerarRibana: (id: string, gerarRibana: boolean) => void
-	updatePercentualRibana: (id: string, percentual: number) => void
-	updateObservacao: (id: string, observacao: string) => void
-	removeFromCart: (id: string) => void
+	adicionarAoCarrinho: (produto: Produto, quantidade?: number) => void
+	atualizarQuantidade: (id: string, novaQuantidade: number) => void
+	atualizarPesoLiquido: (id: string, novoPeso: number) => void
+	atualizarGerarRibana: (id: string, gerarRibana: boolean) => void
+	atualizarPercentualRibana: (id: string, percentual: number) => void
+	atualizarObservacao: (id: string, observacao: string) => void
+	removerDoCarrinho: (id: string) => void
 
 	// Estado de loading/saving
-	isLoading: boolean
-	isSaving: boolean
-	saveCart: () => Promise<void>
+	carregando: boolean
+	salvando: boolean
+	salvarCarrinho: () => Promise<void>
 }
 
-export const CartContext = createContext<CartContextType | null>(null)
+export const ContextoCarrinho = createContext<TipoContextoCarrinho | null>(null)
 
 // Função helper para calcular totais
-const calculateTotals = (items: CartItem[]) => ({
-	totalItems: items.length,
-	totalQuantity: items.reduce((sum, item) => sum + item.quantidade, 0),
-	totalValue: items.reduce((sum, item) => sum + item.valorTotal, 0),
+const calcularTotais = (itens: ItemCarrinho[]) => ({
+	totalItens: itens.length,
+	quantidadeTotal: itens.reduce((soma, item) => soma + item.quantidade, 0),
+	valorTotal: itens.reduce((soma, item) => soma + item.valorTotal, 0),
 })
 
-interface CartProviderProps {
+interface PropsProvedorCarrinho {
 	children: ReactNode
-	initialCartData: {
+	dadosIniciais: {
 		id: string
 		numero: string
 		cliente: string
 		tipoNegociacao: string
-		items: CartItem[]
+		itens: ItemCarrinho[]
 	}
 }
 
-export function CartProvider({ children, initialCartData }: CartProviderProps) {
-	const [cartItems, setCartItems] = useState<CartItem[]>(initialCartData.items)
-	const [cartInfo] = useState<CartInfo>({
-		id: initialCartData.id,
-		numero: initialCartData.numero,
-		cliente: initialCartData.cliente,
-		tipoNegociacao: initialCartData.tipoNegociacao,
+export function ProvedorCarrinho({ children, dadosIniciais }: PropsProvedorCarrinho) {
+	const [itensCarrinho, setItensCarrinho] = useState<ItemCarrinho[]>(dadosIniciais.itens)
+	const [infoCarrinho] = useState<InfoCarrinho>({
+		id: dadosIniciais.id,
+		numero: dadosIniciais.numero,
+		cliente: dadosIniciais.cliente,
+		tipoNegociacao: dadosIniciais.tipoNegociacao,
 	})
-	const [isLoading] = useState(false)
-	const [isSaving, setIsSaving] = useState(false)
+	const [carregando] = useState(false)
+	const [salvando, setSalvando] = useState(false)
 
 	// Calcular totais em tempo real
-	const totals = calculateTotals(cartItems)
+	const totais = calcularTotais(itensCarrinho)
 
 	// Ações do carrinho
-	const removeFromCart = useCallback((id: string) => {
-		setCartItems((currentItems) =>
-			currentItems.filter((item) => item.id !== id),
+	const removerDoCarrinho = useCallback((id: string) => {
+		setItensCarrinho((itensAtuais) =>
+			itensAtuais.filter((item) => item.id !== id),
 		)
 	}, [])
 
-	const updateQuantity = useCallback(
-		(id: string, newQuantity: number) => {
-			if (newQuantity <= 0) {
-				removeFromCart(id)
+	const atualizarQuantidade = useCallback(
+		(id: string, novaQuantidade: number) => {
+			if (novaQuantidade <= 0) {
+				removerDoCarrinho(id)
 				return
 			}
 
-			setCartItems((currentItems) =>
-				currentItems.map((item) =>
+			setItensCarrinho((itensAtuais) =>
+				itensAtuais.map((item) =>
 					item.id === id
 						? {
 								...item,
-								quantidade: newQuantity,
-								valorTotal: newQuantity * item.valorUnitario,
-								pesoLiquido: newQuantity * item.pesoUnitario,
+								quantidade: novaQuantidade,
+								valorTotal: novaQuantidade * item.valorUnitario,
+								pesoLiquido: novaQuantidade * item.pesoUnitario,
 							}
 						: item,
 				),
 			)
 		},
-		[removeFromCart],
+		[removerDoCarrinho],
 	)
 
-	const updatePesoLiquido = useCallback((id: string, newPeso: number) => {
-		setCartItems((currentItems) =>
-			currentItems.map((item) =>
+	const atualizarPesoLiquido = useCallback((id: string, novoPeso: number) => {
+		setItensCarrinho((itensAtuais) =>
+			itensAtuais.map((item) =>
 				item.id === id
 					? {
 							...item,
-							pesoLiquido: newPeso,
+							pesoLiquido: novoPeso,
 							pesoUnitario:
-								item.quantidade > 0 ? newPeso / item.quantidade : newPeso,
+								item.quantidade > 0 ? novoPeso / item.quantidade : novoPeso,
 						}
 					: item,
 			),
 		)
 	}, [])
 
-	const updateGerarRibana = useCallback((id: string, gerarRibana: boolean) => {
-		setCartItems((currentItems) =>
-			currentItems.map((item) =>
+	const atualizarGerarRibana = useCallback((id: string, gerarRibana: boolean) => {
+		setItensCarrinho((itensAtuais) =>
+			itensAtuais.map((item) =>
 				item.id === id ? { ...item, gerarRibana } : item,
 			),
 		)
 	}, [])
 
-	const updatePercentualRibana = useCallback(
+	const atualizarPercentualRibana = useCallback(
 		(id: string, percentual: number) => {
-			setCartItems((currentItems) =>
-				currentItems.map((item) =>
+			setItensCarrinho((itensAtuais) =>
+				itensAtuais.map((item) =>
 					item.id === id ? { ...item, percentualRibana: percentual } : item,
 				),
 			)
@@ -139,91 +139,91 @@ export function CartProvider({ children, initialCartData }: CartProviderProps) {
 		[],
 	)
 
-	const updateObservacao = useCallback((id: string, observacao: string) => {
-		setCartItems((currentItems) =>
-			currentItems.map((item) =>
+	const atualizarObservacao = useCallback((id: string, observacao: string) => {
+		setItensCarrinho((itensAtuais) =>
+			itensAtuais.map((item) =>
 				item.id === id ? { ...item, observacao } : item,
 			),
 		)
 	}, [])
 
-	const addToCart = useCallback((product: Product, quantity = 1) => {
-		setCartItems((currentItems) => {
-			const existingItem = currentItems.find((item) => item.id === product.id)
+	const adicionarAoCarrinho = useCallback((produto: Produto, quantidade = 1) => {
+		setItensCarrinho((itensAtuais) => {
+			const itemExistente = itensAtuais.find((item) => item.id === produto.id)
 
-			if (existingItem) {
-				return currentItems.map((item) =>
-					item.id === product.id
+			if (itemExistente) {
+				return itensAtuais.map((item) =>
+					item.id === produto.id
 						? {
 								...item,
-								quantidade: item.quantidade + quantity,
-								valorTotal: (item.quantidade + quantity) * item.valorUnitario,
-								pesoLiquido: (item.quantidade + quantity) * item.pesoUnitario,
+								quantidade: item.quantidade + quantidade,
+								valorTotal: (item.quantidade + quantidade) * item.valorUnitario,
+								pesoLiquido: (item.quantidade + quantidade) * item.pesoUnitario,
 							}
 						: item,
 				)
 			} else {
-				const newItem: CartItem = {
-					id: product.id,
-					empresa: parseInt(product.codigo) || 1,
-					descricao: product.descricao,
-					quantidade: quantity,
-					valorUnitario: product.preco,
-					valorTotal: quantity * product.preco,
-					unidade: product.unidade,
-					pesoUnitario: product.peso,
-					pesoLiquido: product.peso * quantity,
+				const novoItem: ItemCarrinho = {
+					id: produto.id,
+					empresa: parseInt(produto.codigo) || 1,
+					descricao: produto.descricao,
+					quantidade: quantidade,
+					valorUnitario: produto.preco,
+					valorTotal: quantidade * produto.preco,
+					unidade: produto.unidade,
+					pesoUnitario: produto.peso,
+					pesoLiquido: produto.peso * quantidade,
 					gerarRibana: false,
 					percentualRibana: 0,
 					observacao: "",
 				}
-				return [...currentItems, newItem]
+				return [...itensAtuais, novoItem]
 			}
 		})
 	}, [])
 
-	const saveCart = useCallback(async () => {
-		setIsSaving(true)
+	const salvarCarrinho = useCallback(async () => {
+		setSalvando(true)
 		try {
 			// TODO: Implementar salvamento no backend
 			await new Promise((resolve) => setTimeout(resolve, 1000)) // Simular delay
-			console.log("Carrinho salvo:", { cartInfo, cartItems })
+			console.log("Carrinho salvo:", { infoCarrinho, itensCarrinho })
 		} catch (error) {
 			console.error("Erro ao salvar carrinho:", error)
 			throw error
 		} finally {
-			setIsSaving(false)
+			setSalvando(false)
 		}
-	}, [cartInfo, cartItems])
+	}, [infoCarrinho, itensCarrinho])
 
-	const contextValue: CartContextType = {
-		cartItems,
-		cartInfo,
-		totalItems: totals.totalItems,
-		totalQuantity: totals.totalQuantity,
-		totalValue: totals.totalValue,
-		addToCart,
-		updateQuantity,
-		updatePesoLiquido,
-		updateGerarRibana,
-		updatePercentualRibana,
-		updateObservacao,
-		removeFromCart,
-		isLoading,
-		isSaving,
-		saveCart,
+	const valorContexto: TipoContextoCarrinho = {
+		itensCarrinho,
+		infoCarrinho,
+		totalItens: totais.totalItens,
+		quantidadeTotal: totais.quantidadeTotal,
+		valorTotal: totais.valorTotal,
+		adicionarAoCarrinho,
+		atualizarQuantidade,
+		atualizarPesoLiquido,
+		atualizarGerarRibana,
+		atualizarPercentualRibana,
+		atualizarObservacao,
+		removerDoCarrinho,
+		carregando,
+		salvando,
+		salvarCarrinho,
 	}
 
 	return (
-		<CartContext.Provider value={contextValue}>{children}</CartContext.Provider>
+		<ContextoCarrinho.Provider value={valorContexto}>{children}</ContextoCarrinho.Provider>
 	)
 }
 
 // Hook para usar o contexto
-export function useCartContext() {
-	const context = useContext(CartContext)
-	if (!context) {
-		throw new Error("useCartContext deve ser usado dentro de um CartProvider")
+export function useContextoCarrinho() {
+	const contexto = useContext(ContextoCarrinho)
+	if (!contexto) {
+		throw new Error("useContextoCarrinho deve ser usado dentro de um ProvedorCarrinho")
 	}
-	return context
+	return contexto
 }

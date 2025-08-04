@@ -3,11 +3,11 @@
 import type { ColumnDef } from "@tanstack/react-table"
 import { Plus } from "lucide-react"
 import { Button } from "@/components/ui/button"
-import type { Product } from "../types"
+import type { Produto } from "../types"
 
-export const createProductColumns = (
-	onAddProduct: (product: Product) => void,
-): ColumnDef<Product>[] => [
+export const criarColunasProduto = (
+	aoAdicionarProduto: (produto: Produto) => void,
+): ColumnDef<Produto>[] => [
 	{
 		accessorKey: "empresa",
 		header: () => <div className="text-center">Empresa</div>,
@@ -28,18 +28,10 @@ export const createProductColumns = (
 		minSize: 300,
 	},
 	{
-		accessorKey: "unidade",
-		header: () => <div className="text-center">Unidade</div>,
-		cell: ({ row }) => (
-			<div className="text-center">{row.getValue("unidade")}</div>
-		),
-		size: 80,
-	},
-	{
-		accessorKey: "peso",
-		header: () => <div className="text-center">Qtd</div>,
+		accessorKey: "quantidade",
+		header: () => <div className="text-center">Quantidade</div>,
 		cell: ({ row }) => {
-			const quantidade = parseFloat(row.getValue("peso"))
+			const quantidade = parseFloat(row.getValue("quantidade"))
 			return <div className="text-center">{quantidade.toFixed(0)}</div>
 		},
 		size: 80,
@@ -66,17 +58,17 @@ export const createProductColumns = (
 		id: "actions",
 		header: () => <div className="text-center"></div>,
 		cell: ({ row }) => {
-			const product = row.original
+			const produto = row.original
 
 			return (
 				<div className="text-center">
 					<Button
-						variant="default"
+						variant="outline"
 						size="sm"
-						onClick={() => onAddProduct(product)}
+						onClick={() => aoAdicionarProduto(produto)}
 					>
-						<span className="hidden sm:inline">Adicionar</span>
 						<Plus />
+						<span className="hidden sm:inline">Adicionar</span>
 					</Button>
 				</div>
 			)

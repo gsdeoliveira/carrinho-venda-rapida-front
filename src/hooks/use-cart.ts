@@ -1,45 +1,45 @@
 import { useContext } from "react"
-import { CartContext } from "@/contexts/cart-context"
+import { ContextoCarrinho } from "@/contexts/cart-context"
 import { useUIStore } from "@/stores/cart-store"
 
-export const useCart = () => {
-	const context = useContext(CartContext)
+export const useCarrinho = () => {
+	const contexto = useContext(ContextoCarrinho)
 
-	// Se não estiver dentro de um CartProvider, retorna valores padrão
-	if (!context) {
+	// Se não estiver dentro de um ProvedorCarrinho, retorna valores padrão
+	if (!contexto) {
 		return {
-			cartItems: [],
-			cartInfo: { id: "", numero: "", cliente: "", tipoNegociacao: "" },
-			totalItems: 0,
-			totalQuantity: 0,
-			totalValue: 0,
-			addToCart: () => {},
-			updateQuantity: () => {},
-			removeFromCart: () => {},
-			isLoading: false,
-			isSaving: false,
-			saveCart: async () => {},
+			itensCarrinho: [],
+			infoCarrinho: { id: "", numero: "", cliente: "", tipoNegociacao: "" },
+			totalItens: 0,
+			quantidadeTotal: 0,
+			valorTotal: 0,
+			adicionarAoCarrinho: () => {},
+			atualizarQuantidade: () => {},
+			removerDoCarrinho: () => {},
+			carregando: false,
+			salvando: false,
+			salvarCarrinho: async () => {},
 		}
 	}
 
-	return context
+	return contexto
 }
 
 // Hook para UI global (modal, filtros, etc.)
-export const useCartModal = () => {
+export const useModalCarrinho = () => {
 	const store = useUIStore()
 	return {
-		isModalOpen: store.isModalOpen,
-		setModalOpen: store.setModalOpen,
-		searchFilters: store.searchFilters,
-		updateSearchFilter: store.updateSearchFilter,
+		modalAberto: store.isModalOpen,
+		setModalAberto: store.setModalOpen,
+		filtrosBusca: store.searchFilters,
+		atualizarFiltroBusca: store.updateSearchFilter,
 	}
 }
 
 // Hook para criar novo carrinho
-export const useCartCreation = () => {
+export const useCriacaoCarrinho = () => {
 	const store = useUIStore()
 	return {
-		createNewCart: store.createNewCart,
+		criarNovoCarrinho: store.createNewCart,
 	}
 }

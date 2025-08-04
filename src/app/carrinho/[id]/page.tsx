@@ -2,68 +2,115 @@
 
 import { useParams } from "next/navigation"
 import { useEffect, useState } from "react"
-import { CartActions, CartItemsList, CartSummary } from "@/components/carrinho"
-import type { CartItem } from "@/components/carrinho/types"
+import {
+	AcoesCarrinho,
+	ListaItensCarrinho,
+	ResumoCarrinho,
+} from "@/components/carrinho"
+import type { ItemCarrinho } from "@/components/carrinho/types"
 import { Button } from "@/components/ui/button"
-import { CartProvider } from "@/contexts/cart-context"
+import { ProvedorCarrinho } from "@/contexts/cart-context"
 
-interface CartData {
+interface DadosCarrinho {
 	id: string
 	numero: string
 	cliente: string
 	tipoNegociacao: string
-	items: CartItem[]
+	itens: ItemCarrinho[]
 }
 
 export default function CarrinhoPage() {
 	const params = useParams()
-	const cartId = params.id as string
+	const idCarrinho = params.id as string
 
-	const [cartData, setCartData] = useState<CartData | null>(null)
-	const [isLoading, setIsLoading] = useState(true)
-	const [error, setError] = useState<string | null>(null)
+	const [dadosCarrinho, setDadosCarrinho] = useState<DadosCarrinho | null>(null)
+	const [carregando, setCarregando] = useState(true)
+	const [erro, setErro] = useState<string | null>(null)
 
 	// Scroll para o topo após carregar os dados
 	useEffect(() => {
-		if (!isLoading && cartData) {
+		if (!carregando && dadosCarrinho) {
 			window.scrollTo({ top: 0, behavior: "smooth" })
 		}
-	}, [isLoading, cartData])
+	}, [carregando, dadosCarrinho])
 
 	// Simular carregamento de dados do carrinho
 	useEffect(() => {
-		const loadCartData = async () => {
-			setIsLoading(true)
-			setError(null)
+		const carregarDadosCarrinho = async () => {
+			setCarregando(true)
+			setErro(null)
 
 			try {
 				// TODO: Substituir por chamada real da API
 				await new Promise((resolve) => setTimeout(resolve, 500)) // Simular delay
 
 				// Dados mockados para teste
-				const mockCartData: CartData = {
-					id: cartId,
-					numero: cartId,
+				const dadosCarrinhoMock: DadosCarrinho = {
+					id: idCarrinho,
+					numero: idCarrinho,
 					cliente: "ISABELA BRAGA VIEIRA",
 					tipoNegociacao: "A VISTA LJ",
-					items: [],
+					itens: [
+						{
+							id: "1",
+							descricao: "SUPER COMFORT 30% POLIAMIDA 10% ELASTANO",
+							empresa: 1,
+							valorTotal: 89.9,
+							pesoLiquido: 0.3,
+							gerarRibana: true,
+							percentualRibana: 5,
+							observacao: "Tecido de alta performance",
+							unidade: "MT",
+							pesoUnitario: 0.3,
+							valorUnitario: 89.9,
+							quantidade: 1,
+						},
+						{
+							id: "2",
+							descricao: "MALHA PREMIUM 100% ALGODÃO PIMA",
+							empresa: 1,
+							valorTotal: 129.9,
+							pesoLiquido: 0.4,
+							gerarRibana: false,
+							percentualRibana: 0,
+							observacao: "Toque macio e confortável",
+							unidade: "MT",
+							pesoUnitario: 0.4,
+							valorUnitario: 129.9,
+							quantidade: 1,
+						},
+						{
+							id: "3",
+							descricao: "TECH DRY 80% POLIÉSTER 20% ELASTANO",
+							empresa: 1,
+							valorTotal: 199.9,
+							pesoLiquido: 0.25,
+							gerarRibana: true,
+							percentualRibana: 8,
+							observacao: "Secagem rápida",
+							unidade: "MT",
+							pesoUnitario: 0.25,
+							valorUnitario: 199.9,
+							quantidade: 1,
+						},
+					],
 				}
 
-				setCartData(mockCartData)
+				setDadosCarrinho(dadosCarrinhoMock)
 			} catch (err) {
-				setError("Erro ao carregar carrinho")
+				setErro("Erro ao carregar carrinho")
 				console.error("Erro ao carregar carrinho:", err)
 			} finally {
-				setIsLoading(false)
+				setCarregando(false)
 			}
 		}
 
-		if (cartId) {
-			loadCartData()
+		if (idCarrinho) {
+			carregarDadosCarrinho()
 		}
-	}, [cartId])
+	}, [idCarrinho])
 
-	if (isLoading) {
+	if (carregando) {
 		return (
 			<div className="min-h-screen bg-gray-50 flex items-center justify-center">
 				<div className="text-center">
@@ -74,12 +121,12 @@ export default function CarrinhoPage() {
 		)
 	}
 
-	if (error || !cartData) {
+	if (erro || !dadosCarrinho) {
 		return (
 			<div className="min-h-screen bg-gray-50 flex items-center justify-center">
 				<div className="text-center">
 					<p className="text-red-600 mb-4">
-						{error || "Carrinho não encontrado"}
+						{erro || "Carrinho não encontrado"}
 					</p>
 					<Button variant="info" onClick={() => window.history.back()}>
 						Voltar
@@ -90,17 +137,17 @@ export default function CarrinhoPage() {
 	}
 
 	return (
-		<CartProvider initialCartData={cartData}>
+		<ProvedorCarrinho dadosIniciais={dadosCarrinho}>
 			<div className="min-h-screen bg-gray-50">
 				<div className="px-3 sm:px-6 py-3 sm:py-6">
-					<CartActions />
+					<AcoesCarrinho />
 
 					<div className="space-y-6">
-						<CartSummary />
-						<CartItemsList />
+						<ResumoCarrinho />
+						<ListaItensCarrinho />
 					</div>
 				</div>
 			</div>
-		</CartProvider>
+		</ProvedorCarrinho>
 	)
 }

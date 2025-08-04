@@ -14,14 +14,14 @@ import {
 import { Input } from "@/components/ui/input"
 import { Label } from "@/components/ui/label"
 import { RadioGroup, RadioGroupItem } from "@/components/ui/radio-group"
-import type { Product } from "../types"
+import type { Produto } from "../types"
 
-interface AddProductModalProps {
-	product: Product | null
-	isOpen: boolean
-	onClose: () => void
-	onAddToCart: (productData: {
-		product: Product
+interface PropsModalAdicionarProduto {
+	produto: Produto | null
+	aberto: boolean
+	aoFechar: () => void
+	aoAdicionarAoCarrinho: (dadosProduto: {
+		produto: Produto
 		quantidade: number
 		volume: number
 		valorUnitario: number
@@ -29,12 +29,12 @@ interface AddProductModalProps {
 	}) => void
 }
 
-export function AddProductModal({
-	product,
-	isOpen,
-	onClose,
-	onAddToCart,
-}: AddProductModalProps) {
+export function ModalAdicionarProduto({
+	produto,
+	aberto,
+	aoFechar,
+	aoAdicionarAoCarrinho,
+}: PropsModalAdicionarProduto) {
 	const [quantidade, setQuantidade] = useState<number>(1)
 	const [volume, setVolume] = useState<number>(20) // 1 unidade = 20kg
 	const [valorUnitario, setValorUnitario] = useState<number>(0)
@@ -43,16 +43,16 @@ export function AddProductModal({
 		"quantidade",
 	)
 
-	// Reset form when product changes
+	// Reset form when produto changes
 	useEffect(() => {
-		if (product) {
+		if (produto) {
 			setQuantidade(1)
 			setVolume(20)
-			setValorUnitario(product.preco)
+			setValorUnitario(produto.preco)
 			setMisturarLote(false)
 			setInputType("quantidade")
 		}
-	}, [product])
+	}, [produto])
 
 	// Calculate volume when quantidade changes and quantidade is selected
 	useEffect(() => {
@@ -68,36 +68,36 @@ export function AddProductModal({
 		}
 	}, [volume, inputType])
 
-	const handleQuantidadeChange = (value: number) => {
+	const lidarComMudancaQuantidade = (value: number) => {
 		setQuantidade(value)
 	}
 
-	const handleVolumeChange = (value: number) => {
+	const lidarComMudancaVolume = (value: number) => {
 		setVolume(value)
 	}
 
-	const handleAddToCart = () => {
-		if (!product) return
+	const lidarComAdicionarAoCarrinho = () => {
+		if (!produto) return
 
-		onAddToCart({
-			product,
+		aoAdicionarAoCarrinho({
+			produto,
 			quantidade,
 			volume,
 			valorUnitario,
 			misturarLote,
 		})
 
-		onClose()
+		aoFechar()
 	}
 
-	if (!product) return null
+	if (!produto) return null
 
 	return (
-		<Dialog open={isOpen} onOpenChange={onClose}>
+		<Dialog open={aberto} onOpenChange={aoFechar}>
 			<DialogContent className="sm:max-w-[500px] overflow-auto max-h-[calc(100vh-200px)]">
 				<DialogHeader>
 					<DialogTitle className="text-start text-base md:text-lg">
-						Adicionar Produto ao Carrinho
+						Adicionar Produto
 					</DialogTitle>
 				</DialogHeader>
 
@@ -108,25 +108,25 @@ export function AddProductModal({
 							<Label className="text-sm font-medium text-gray-600">
 								Produto
 							</Label>
-							<p className="text-sm font-semibold">{product.descricao}</p>
+							<p className="text-sm font-semibold">{produto.descricao}</p>
 						</div>
 						<div>
 							<Label className="text-sm font-medium text-gray-600">
 								Código
 							</Label>
-							<p className="text-sm font-mono">{product.codigo}</p>
+							<p className="text-sm font-mono">{produto.codigo}</p>
 						</div>
 						<div>
 							<Label className="text-sm font-medium text-gray-600">
 								Empresa
 							</Label>
-							<p className="text-sm">{product.empresa}</p>
+							<p className="text-sm">{produto.empresa}</p>
 						</div>
 						<div>
 							<Label className="text-sm font-medium text-gray-600">
 								Estoque
 							</Label>
-							<p className="text-sm">{product.estoque.toFixed(2)}</p>
+							<p className="text-sm">{produto.estoque.toFixed(2)}</p>
 						</div>
 					</div>
 
@@ -164,7 +164,7 @@ export function AddProductModal({
 									step="0.01"
 									value={quantidade}
 									onChange={(e) =>
-										handleQuantidadeChange(parseFloat(e.target.value) || 0)
+										lidarComMudancaQuantidade(parseFloat(e.target.value) || 0)
 									}
 									placeholder="Digite a quantidade em unidades"
 								/>
@@ -182,7 +182,7 @@ export function AddProductModal({
 									step="0.01"
 									value={volume}
 									onChange={(e) =>
-										handleVolumeChange(parseFloat(e.target.value) || 0)
+										lidarComMudancaVolume(parseFloat(e.target.value) || 0)
 									}
 									placeholder="Digite o volume em kg"
 								/>
@@ -223,10 +223,10 @@ export function AddProductModal({
 				</div>
 
 				<DialogFooter>
-					<Button variant="outline" onClick={onClose}>
+					<Button variant="outline" onClick={aoFechar}>
 						Cancelar
 					</Button>
-					<Button onClick={handleAddToCart} disabled={quantidade <= 0}>
+					<Button onClick={lidarComAdicionarAoCarrinho} disabled={quantidade <= 0}>
 						Adicionar ao Carrinho
 					</Button>
 				</DialogFooter>

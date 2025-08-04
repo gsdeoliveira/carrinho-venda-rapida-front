@@ -1,18 +1,5 @@
-// Componentes principais do carrinho
-export { CartActions } from "./cart-actions"
-export { CartSummary } from "./cart-summary"
-export { EmptyState } from "./empty-state"
-// Componentes de itens do carrinho
-export {
-	CartItemsDataTable,
-	CartItemsList,
-	createCartItemColumns,
-} from "./itens"
-export { mockProducts } from "./mock-data"
-// Componentes de produtos
-export {
-	createProductColumns,
-	ProductSearchModal,
-	ProductTable,
-} from "./produtos"
-export type { CartItem, Product } from "./types"
+export { AcoesCarrinho } from "./cart-actions"
+export { ResumoCarrinho } from "./cart-summary"
+export { EstadoVazio } from "./empty-state"
+export * from "./itens"
+export * from "./produtos"

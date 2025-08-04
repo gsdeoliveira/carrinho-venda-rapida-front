@@ -1,50 +1,67 @@
 "use client"
 
 import { ShoppingCart } from "lucide-react"
-import { useCallback, useMemo } from "react"
+import { useCallback, useEffect, useMemo, useState } from "react"
 import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card"
-import { useCart } from "@/hooks/use-cart"
-import { EmptyState } from "../empty-state"
-import { ProductSearchModal } from "../produtos/product-search-modal"
-import { createCartItemColumns } from "./cart-item-columns"
-import { CartItemsDataTable } from "./cart-items-data-table"
+import { useCarrinho } from "@/hooks/use-cart"
+import { EstadoVazio } from "../empty-state"
+import { ModalBuscaProduto } from "../produtos/product-search-modal"
+import type { ItemCarrinho } from "../types"
+import { criarColunasItemCarrinho } from "./cart-item-columns"
+import { TabelaDadosItensCarrinho } from "./cart-items-data-table"
 
-export function CartItemsList() {
-	const { cartItems, removeFromCart } = useCart()
+export function ListaItensCarrinho() {
+	const { itensCarrinho, removerDoCarrinho } = useCarrinho()
+	const [isMobile, setIsMobile] = useState(false)
 
-	const handleRemoveFromCart = useCallback(
+	// Hook para detectar se é mobile ou desktop
+	useEffect(() => {
+		const checkIsMobile = () => {
+			setIsMobile(window.innerWidth < 768) // md breakpoint
+		}
+
+		checkIsMobile()
+		window.addEventListener("resize", checkIsMobile)
+
+		return () => window.removeEventListener("resize", checkIsMobile)
+	}, [])
+
+	const lidarComRemoverDoCarrinho = useCallback(
 		(id: string) => {
-			removeFromCart(id)
+			removerDoCarrinho(id)
 		},
-		[removeFromCart],
+		[removerDoCarrinho],
 	)
 
 	// Otimizando a criação das colunas com useMemo
-	const columns = useMemo(
-		() => createCartItemColumns(handleRemoveFromCart),
-		[handleRemoveFromCart],
+	const colunas = useMemo(
+		() => criarColunasItemCarrinho(lidarComRemoverDoCarrinho, isMobile),
+		[lidarComRemoverDoCarrinho, isMobile],
 	)
 
 	return (
 		<Card>
 			<CardHeader>
-				<div className="flex items-center justify-between">
-					<CardTitle className="text-lg font-semibold flex items-center gap-2">
+				<div className="flex items-start sm:items-center justify-between">
+					<CardTitle className="sm:text-lg font-semibold flex items-center gap-2">
 						<ShoppingCart className="h-5 w-5" />
 						Itens do Carrinho
 					</CardTitle>
 
-					<ProductSearchModal />
+					<ModalBuscaProduto />
 				</div>
 			</CardHeader>
-			<CardContent className="p-6">
-				{cartItems.length === 0 ? (
-					<EmptyState
-						title="Nenhum item no carrinho"
-						description="Clique em 'Adicionar Item' para adicionar um produto ao carrinho"
+			<CardContent className="p-3 sm:p-6">
+				{itensCarrinho.length === 0 ? (
+					<EstadoVazio
+						titulo="Nenhum item no carrinho"
+						descricao="Clique em 'Adicionar Item' para adicionar um produto ao carrinho"
 					/>
 				) : (
-					<CartItemsDataTable columns={columns} data={cartItems} />
+					<TabelaDadosItensCarrinho
+						colunas={colunas}
+						dados={itensCarrinho as ItemCarrinho[]}
+					/>
 				)}
 			</CardContent>
 		</Card>
